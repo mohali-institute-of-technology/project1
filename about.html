@@ -1,0 +1,136 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>University Website Design - Easy Tutorials</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,600,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> 
+</head>
+<body>
+    <section class="sub-header">
+        <nav>
+            <a href="index.html"><img src="images/logo.png"></a>
+            <div class="nav-links" id="navLinks">  
+                <i class="fa fa-close" onclick="hideMenu()"></i>
+                <ul>
+                    <li><a href="index.html">HOME</a></li>
+                    <li><a href="about.html">ABOUT</a></li>
+                    <li><a href="course.html">COURSE</a></li>
+                    <li><a href="blog.html">BLOG</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                </ul>
+            </div>
+            <i class="fa fa-bars" onclick="showMenu()"></i>
+        </nav>   
+            <h1>About Us</h1>
+    </section>
+    
+    
+<!------- about us content -------->
+    
+<section class="about-us">
+    <div class="row">
+        <div class="about-col">
+            <h1>We are the world's largest university</h1>     
+            <p>Mohali Institute of Techniques – A Hub of Innovation
+                The Mohali Institute of Techniques is one of the world’s most prestigious institutions, known for its cutting-edge research, technological breakthroughs, and academic excellence. Founded in 1861 in Ontario-Canada, Mohali Institute of Techniques has played a crucial role in shaping science, engineering, and entrepreneurship.
+                
+                Why Mohali Institute of Techniques Stands Out?
+                🔬 Pioneering Research – From AI and robotics to space exploration and biotech, Mohali Institute of Techniques leads the way in innovation.
+                📚 Top-Tier Academics – Home to world-renowned programs in engineering, computer science, business, and more.
+                💡 Entrepreneurial Spirit – Mohali Institute of Techniques startups have generated thousands of successful companies worldwide.
+                🌍 Global Impact – Alumni and researchers have contributed to groundbreaking discoveries that change the world.
+                🏆 Nobel Laureates & Innovators – Many Mohali Institute of Techniques faculty and graduates have received prestigious awards, including 100+ Nobel Prizes.
+                
+                Mohali Institute of Techniques’s Motto: "Mens et Manus" (Mind and Hand)
+                This philosophy reflects Mohali Institute of Techniques’s commitment to both theoretical knowledge and practical application, making it a hub for problem-solvers and innovators.
+                
+                From self-driving cars to space missions, Mohali Institute of Techniques continues to push the boundaries of what’s possible. .</p>
+           
+        </div>
+        <div class="about-col">
+            <img src="images/about.jpg">
+        </div>
+    </div>    
+</section>
+
+
+<!-- AOS CSS for scroll animation -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+<!-- 3D Model Section -->
+<section class="three-d-model" data-aos="fade-up" style="text-align: center; padding: 60px 20px; background: linear-gradient(to right, #e0f7fa, #f9fbe7);">
+    <h2 style="font-size: 32px; color: #004aad; margin-bottom: 10px;">Explore Our Student Accomudation in 3D</h2>
+    <p style="font-size: 18px; color: #333; max-width: 700px; margin: 0 auto 30px;">
+        Take a virtual tour of our beautifully designed Student Accomudation in full 3D. Zoom, rotate, and explore every detail as if you were right there!
+    </p>
+
+    <!-- model-viewer script -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+    <!-- 3D model element -->
+    <model-viewer 
+      src="school_building.glb"
+      alt="3D Model of School Building"
+      auto-rotate 
+      camera-controls 
+      background-color="#ffffff"
+      style="display: block; margin: 20px auto; width: 100%; max-width: 800px; height: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 12px;">
+    </model-viewer>
+
+    <p style="font-size: 14px; color: #666; margin-top: 10px;">🖱️ Click & drag to rotate • Scroll to zoom</p>
+
+    <a href="contact.html" class="cta-button">Join Our Campus</a>
+</section>
+
+<!-- AOS JS for animation -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
+
+<!-- Call-to-action button styles -->
+<style>
+.cta-button {
+  display: inline-block;
+  padding: 12px 25px;
+  background: #004aad;
+  color: white;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 20px;
+  transition: background 0.3s;
+}
+.cta-button:hover {
+  background: #002f6c;
+}
+</style>
+
+<!-------- footer ---------->
+
+<section class="footer">
+    <h4>About Us</h4>
+    <p>The Mohali Institute of Techniques is a world-renowned hub for technology, science, and innovation. Founded in 1861, Mohali Institute of Techniques pioneers cutting-edge research, breakthrough inventions, and entrepreneurial success. With a spirit of "Mind and Hand" (Mens et Manus), Mohali Institute of Techniques turns bold ideas into reality—shaping the future, one discovery at a time. </p>
+    
+        
+    </div>
+    <p>made by Sachneet Kaur</p></a>
+</section>   
+  
+<!----JavaScript for toggle menu---->
+<script>
+    var navLinks = document.getElementById("navLinks");
+
+    function showMenu() {
+        navLinks.style.right = "0";
+    }
+
+    function hideMenu() {
+        navLinks.style.right = "-200px";
+    }
+</script> 
+    
+</body>
+</html>
+
