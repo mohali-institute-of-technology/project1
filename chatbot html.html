@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MIT College Chatbot</title>
+
+  <style>
+    @font-face {
+      font-family: 'Algerian';
+      src: local('Algerian'), url('https://fonts.cdnfonts.com/s/14304/ALGER.TTF') format('truetype');
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Algerian', Arial, sans-serif;
+      color: steelblue;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+      padding: 30px 20px;
+      background: rgba(0, 0, 0, 0.6);
+      font-size: 1.1rem;
+      text-shadow: 1px 1px 2px #000;
+      color: gold;
+      text-align: center;
+    }
+
+    .chat-container {
+      width: 500px;
+      max-width: 95%;
+      background: rgba(255, 255, 255, 0.95);
+      color: orange;
+      padding: 10px;
+      margin: 0 auto;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+      font-family: Arial, sans-serif;
+    }
+
+    #chat-log {
+      height: 180px;
+      overflow-y: auto;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      border-radius: 6px;
+    }
+
+    .chat-message {
+      margin-bottom: 8px;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    .user-bubble, .bot-bubble {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 16px;
+      margin-bottom: 4px;
+      max-width: 80%;
+      position: relative;
+    }
+
+    .user-bubble {
+      background: #0084ff;
+      color: white;
+      float: right;
+      clear: both;
+    }
+
+    .bot-bubble {
+      background: #f1f0f0;
+      color: #333;
+      float: left;
+      clear: both;
+    }
+
+    .timestamp {
+      display: block;
+      font-size: 10px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .typing-indicator {
+      font-style: italic;
+      color: gray;
+      margin: 5px 0;
+      clear: both;
+    }
+
+    .hints {
+      text-align: left;
+      margin: 10px 0;
+      font-size: 13px;
+      color: #444;
+    }
+
+    .hints ul {
+      padding-left: 18px;
+      margin: 0;
+    }
+
+    .hints li {
+      list-style-type: " 🤓";
+      margin-bottom: 4px;
+      cursor: pointer;
+      color: #008CBA;
+      text-decoration: underline;
+      position: relative;
+    }
+
+    .hints li::before {
+      content: attr(data-emoji) " ";
+      position: absolute;
+      left: -20px;
+      font-size: 16px;
+    }
+
+    .hints li:hover {
+      color: #005f6b;
+    }
+
+    .chat-input-area {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    #chat-input {
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      outline: none;
+      border-radius: 8px;
+      box-shadow: inset 2px 2px 6px #aaa, inset -2px -2px 6px #fff;
+      transition: all 0.3s ease-in-out;
+    }
+
+    #chat-input:focus {
+      box-shadow: inset 1px 1px 10px #555, inset -1px -1px 10px #fff;
+      transform: scale(1.02);
+    }
+
+    button {
+      padding: 10px;
+      font-size: 14px;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #222;
+      cursor: pointer;
+    }
+
+    #mic-btn {
+      background: #ff4081;
+    }
+
+    #mic-btn.listening {
+      background: #00c853;
+    }
+
+    #language-select {
+      background: #444;
+      color: white;
+      padding: 5px;
+      border-radius: 5px;
+      font-size: 14px;
+      border: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>MIT College ChatBot</h1>
+    <p id="greeting">Good Morning! How can I assist you today?</p>
+    <select id="language-select">
+      <option value="en">English</option>
+      <option value="es">Spanish</option>
+      <option value="fr">French</option>
+      <option value="de">German</option>
+    </select>
+  </header>
+
+  <div class="chat-container">
+    <div id="chat-log"></div>
+
+    <div class="hints">
+      <p><strong>Try asking:</strong></p>
+      <ul id="hint-list">
+        <li onclick="handleHint('What is the schedule for today?')">What is today's schedule?</li>
+        <li onclick="handleHint('How to access the student portal?')">How to access the student portal?</li>
+        <li onclick="handleHint('Where is the library?')">Where is the library?</li>
+        <li onclick="handleHint('How to contact IT support?')">How to contact IT support?</li>
+        <li onclick="handleHint('Who is the principal?')">Who is the principal?</li>
+        <li onclick="handleHint('What programs mitcollege offer?')">What programs mitcollege offer?</li>
+      </ul>
+    </div>
+
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Ask me something..." aria-label="Chat input" />
+      <button onclick="handleChat()">Send</button>
+      <button id="mic-btn" title="Speak to Chatbot">🎤</button>
+    </div>
+  </div>
+
+  <script>
+    const responses = {
+      en: {
+        "what is today's schedule": "Classes run from 9 AM to 4 PM with a lunch break at 12 PM.",
+        "how to access the student portal": "Go to <a href='https://hdit.world/course.html'>student portal</a>.",
+        "where is the library": "The library is located on the 2nd floor, near the reading hall.",
+        "how to contact it support": "Email: itsupport@mitcollege.edu or call 123-456-7890.",
+        "who is the principal": "Dr. Gurjot Randhawa is the principal of MIT College.",
+        "what programs mitcollege offer?": "Go to <a href='https://hdit.world/course.html'>student portal</a>."
+      },
+      es: {
+        "what is today's schedule": "Las clases son de 9 AM a 4 PM con un receso para almuerzo a las 12 PM.",
+        "how to access the student portal": "Ve a <a href='https://hdit.world/course.html'>portal estudiantil</a>.",
+        "where is the library": "La biblioteca está en el segundo piso, cerca de la sala de lectura.",
+        "how to contact it support": "Correo electrónico: itsupport@mitcollege.edu o llama al 123-456-7890.",
+        "who is the principal": "El Dr. Gurjot Randhawa es el director de MIT College.",
+        "what programs mitcollege offer?": "Ve a <a href='https://hdit.world/course.html'>portal estudiantil</a>."
+      },
+      fr: {
+        "what is today's schedule": "Les cours vont de 9h à 16h avec une pause déjeuner à 12h.",
+        "how to access the student portal": "Allez sur <a href='https://hdit.world/course.html'>portail étudiant</a>.",
+        "where is the library": "La bibliothèque est située au 2e étage, près de la salle de lecture.",
+        "how to contact it support": "Email : itsupport@mitcollege.edu ou appelez le 123-456-7890.",
+        "who is the principal": "Le Dr. Gurjot Randhawa est le principal de MIT College.",
+        "what programs mitcollege offer?": "Allez sur <a href='https://hdit.world/course.html'>portail étudiant</a>."
+      },
+      de: {
+        "what is today's schedule": "Die Kurse gehen von 9 Uhr bis 16 Uhr mit einer Mittagspause um 12 Uhr.",
+        "how to access the student portal": "Gehe zu <a href='https://hdit.world/course.html'>Studentenportal</a>.",
+        "where is the library": "Die Bibliothek befindet sich im 2. Stock, in der Nähe der Lesesäle.",
+        "how to contact it support": "Email: itsupport@mitcollege.edu oder rufen Sie 123-456-7890 an.",
+        "who is the principal": "Dr. Gurjot Randhawa ist der Direktor des MIT College.",
+        "what programs mitcollege offer?": "Gehen Sie zum <a href='https://hdit.world/course.html'>Studentenportal</a>."
+      }
+    };
+
+    const translations = {
+      en: {
+        "what is today's schedule": "What is today's schedule?",
+        "how to access the student portal": "How to access the student portal?",
+        "where is the library": "Where is the library?",
+        "how to contact it support": "How to contact IT support?",
+        "who is the principal": "Who is the principal?",
+        "what programs mitcollege offer?": "What programs does MIT College offer?"
+      },
+      es: {
+        "what is today's schedule": "¿Cuál es el horario de hoy?",
+        "how to access the student portal": "¿Cómo acceder al portal estudiantil?",
+        "where is the library": "¿Dónde está la biblioteca?",
+        "how to contact it support": "¿Cómo contactar con el soporte técnico?",
+        "who is the principal": "¿Quién es el director?",
+        "what programs mitcollege offer?": "¿Qué programas ofrece MIT College?"
+      },
+      fr: {
+        "what is today's schedule": "Quel est l'emploi du temps aujourd'hui ?",
+        "how to access the student portal": "Comment accéder au portail étudiant ?",
+        "where is the library": "Où est la bibliothèque ?",
+        "how to contact it support": "Comment contacter le support informatique ?",
+        "who is the principal": "Qui est le principal ?",
+        "what programs mitcollege offer?": "Quels programmes MIT College offre-t-il ?"
+      },
+      de: {
+        "what is today's schedule": "Was ist der Stundenplan heute?",
+        "how to access the student portal": "Wie greife ich auf das Studentenportal zu?",
+        "where is the library": "Wo ist die Bibliothek?",
+        "how to contact it support": "Wie kann ich den IT-Support kontaktieren?",
+        "who is the principal": "Wer ist der Direktor?",
+        "what programs mitcollege offer?": "Welche Programme bietet MIT College an?"
+      }
+    };
+
+    let currentLanguage = 'en'; // Default language
+
+    const getTimestamp = () => {
+      const now = new Date();
+      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    const getGreeting = () => {
+      const now = new Date();
+      const hour = now.getHours();
+      if (hour < 12) {
+        return 'Good Morning! How can I assist you today?';
+      } else if (hour < 18) {
+        return 'Good Afternoon! How can I assist you today?';
+      } else {
+        return 'Good Evening! How can I assist you today?';
+      }
+    };
+
+    const updateGreeting = () => {
+      document.getElementById("greeting").textContent = getGreeting();
+    };
+
+    const createMessageBubble = (content, sender = 'user') => {
+      const div = document.createElement('div');
+      div.className = 'chat-message';
+      const bubbleClass = sender === 'user' ? 'user-bubble' : 'bot-bubble';
+      div.innerHTML = `<div class="${bubbleClass}">${content}<span class="timestamp">${getTimestamp()}</span></div>`;
+      return div;
+    };
+
+    const handleChat = () => {
+      const inputBox = document.getElementById("chat-input");
+      const chatLog = document.getElementById("chat-log");
+      const input = inputBox.value.toLowerCase().trim();
+
+      if (!input) return;
+
+      // Translate the input question into the selected language
+      const translatedQuestion = translations[currentLanguage][input] || input;
+
+      const userMsg = createMessageBubble(translatedQuestion, 'user');
+      chatLog.appendChild(userMsg);
+      chatLog.scrollTop = chatLog.scrollHeight;
+      inputBox.value = "";
+
+      const typing = document.createElement('div');
+      typing.className = 'typing-indicator';
+      typing.id = 'typing';
+      typing.textContent = 'Bot is typing...';
+      chatLog.appendChild(typing);
+      chatLog.scrollTop = chatLog.scrollHeight;
+
+      setTimeout(() => {
+        typing.remove();
+
+        let response = responses[currentLanguage]["what is today's schedule"] || "Sorry, I don’t understand that yet.";
+        for (let question in responses[currentLanguage]) {
+          if (input.includes(question)) {
+            response = responses[currentLanguage][question];
+            break;
+          }
+        }
+
+        const botMsg = createMessageBubble(response, 'bot');
+        chatLog.appendChild(botMsg);
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }, 1500);
+    };
+
+    const handleHint = (hint) => {
+      const inputBox = document.getElementById("chat-input");
+      inputBox.value = hint;
+      handleChat();
+    };
+
+    document.getElementById("language-select").addEventListener("change", function () {
+      currentLanguage = this.value;
+      updateGreeting();
+    });
+
+    document.getElementById("chat-input").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        handleChat();
+      }
+    });
+
+    // Voice-to-text setup using Web Speech API
+    const micButton = document.getElementById("mic-btn");
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    micButton.onclick = function () {
+      recognition.start();
+      micButton.classList.add('listening');
+      micButton.textContent = '🎤 listening...';
+    };
+
+    recognition.onresult = function (event) {
+      const transcript = event.results[0][0].transcript;
+      document.getElementById("chat-input").value = transcript;
+      micButton.classList.remove('listening');
+      micButton.textContent = '🎤';
+      handleChat();
+    };
+
+    recognition.onend = function () {
+      micButton.classList.remove('listening');
+      micButton.textContent = '🎤';
+    };
+
+    updateGreeting();
+  </script>
+
+</body>
+</html>
