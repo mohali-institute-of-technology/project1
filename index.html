@@ -30,7 +30,173 @@
             <a href="contact.html" class="hero-btn">Visit Us to Know More</a>
         </div>
     </section>
-    
+ <!-- Chatbot Widget -->
+<div id="chatbot-button">💬</div>
+
+<div id="chatbot-popup">
+  <div id="chatbot-header">MIT Chatbot</div>
+  <div id="chatbot-box"></div>
+  <div id="chatbot-input-area">
+    <input type="text" id="chatbot-input" placeholder="Type your question..." />
+    <button id="chatbot-send">Send</button>
+  </div>
+</div>
+
+<style>
+  /* Floating Chatbot Button */
+  #chatbot-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #004e92;
+    color: white;
+    font-size: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: background 0.3s;
+  }
+
+  #chatbot-button:hover {
+    background-color: #00376a;
+  }
+
+  /* Chatbot Popup */
+  #chatbot-popup {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    bottom: 90px;
+    left: 20px;
+    width: 300px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    z-index: 1000;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+
+  #chatbot-header {
+    background-color: #004e92;
+    color: white;
+    padding: 12px 20px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  #chatbot-box {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #f4f8fc;
+  }
+
+  .bot-msg, .user-msg {
+    padding: 10px;
+    border-radius: 15px;
+    max-width: 80%;
+  }
+
+  .bot-msg {
+    background: #e0ecff;
+    align-self: flex-start;
+  }
+
+  .user-msg {
+    background: #daf0ff;
+    align-self: flex-end;
+  }
+
+  #chatbot-input-area {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    gap: 5px;
+    background: #fff;
+  }
+
+  #chatbot-input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #aaa;
+  }
+
+  #chatbot-send {
+    background-color: #004e92;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  const chatbotBtn = document.getElementById('chatbot-button');
+  const chatbotPopup = document.getElementById('chatbot-popup');
+  const chatbotBox = document.getElementById('chatbot-box');
+  const chatbotInput = document.getElementById('chatbot-input');
+  const chatbotSend = document.getElementById('chatbot-send');
+
+  const botReplies = {
+    "hello": "Hello! Welcome to MIT. How can I help?",
+    "hi": "Hi there! Ask me anything about Mohali Institute of Techniques.",
+    "admission": "Admissions are open. Visit our website or call us.",
+    "courses": "We offer diploma and degree courses in tech, engineering, and more.",
+    "fees": "Fee details are available on our official website.",
+    "location": "We’re in Phase 6, Mohali, Punjab.",
+    "contact": "Call us at +91-1234567890 or email info@mit.edu",
+  };
+
+  chatbotBtn.addEventListener('click', () => {
+    chatbotPopup.style.display = chatbotPopup.style.display === 'flex' ? 'none' : 'flex';
+  });
+
+  chatbotSend.addEventListener('click', () => {
+    const input = chatbotInput.value.trim();
+    if (!input) return;
+    addMessage(input, 'user-msg');
+    chatbotInput.value = '';
+
+    setTimeout(() => {
+      const response = getResponse(input.toLowerCase());
+      addMessage(response, 'bot-msg');
+    }, 400);
+  });
+
+  chatbotInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') chatbotSend.click();
+  });
+
+  function addMessage(text, className) {
+    const msg = document.createElement('div');
+    msg.className = className;
+    msg.textContent = text;
+    chatbotBox.appendChild(msg);
+    chatbotBox.scrollTop = chatbotBox.scrollHeight;
+  }
+
+  function getResponse(input) {
+    for (let key in botReplies) {
+      if (input.includes(key)) return botReplies[key];
+    }
+    return "Sorry, I didn't understand that. Try asking about courses, admissions, or contact info.";
+  }
+</script>
+   
 <!---------- course ----------->
     
     <section class="course">
